@@ -10,9 +10,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_14_165617) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_14_171031) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "assignments", force: :cascade do |t|
+    t.string "title"
+    t.text "description"
+    t.bigint "course_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_assignments_on_course_id"
+  end
+
+  create_table "courses", force: :cascade do |t|
+    t.string "name"
+    t.text "Description"
+    t.bigint "instructor_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["instructor_id"], name: "index_courses_on_instructor_id"
+  end
 
   create_table "departments", force: :cascade do |t|
     t.string "name"
@@ -21,6 +39,16 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_165617) do
     t.datetime "updated_at", null: false
     t.bigint "manager_id", null: false
     t.index ["manager_id"], name: "index_departments_on_manager_id"
+  end
+
+  create_table "enrollments", force: :cascade do |t|
+    t.bigint "student_id", null: false
+    t.bigint "course_id", null: false
+    t.integer "grade"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_enrollments_on_course_id"
+    t.index ["student_id"], name: "index_enrollments_on_student_id"
   end
 
   create_table "instructors", force: :cascade do |t|
@@ -64,7 +92,11 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_165617) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "assignments", "courses"
+  add_foreign_key "courses", "instructors"
   add_foreign_key "departments", "instructors", column: "manager_id"
+  add_foreign_key "enrollments", "courses"
+  add_foreign_key "enrollments", "students"
   add_foreign_key "instructors", "departments"
   add_foreign_key "students", "departments"
 end
