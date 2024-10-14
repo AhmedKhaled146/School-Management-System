@@ -4,10 +4,10 @@
 
 ***
 
-# ERD
+## ERD
 ![School Management System-ERD.png](Database%20-%20solutions/School%20Management%20System-ERD.png)
-
-# Mapping
+***
+## Mapping
 ![School Management System-Mapping.png](Database%20-%20solutions/School%20Management%20System-Mapping.png)
 
 **Key Features:**
