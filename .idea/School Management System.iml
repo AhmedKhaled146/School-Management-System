@@ -63,10 +63,7 @@
     <orderEntry type="library" scope="PROVIDED" name="irb (v1.14.1, rbenv: 3.3.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="json (v2.7.2, rbenv: 3.3.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="jsonapi-serializer (v2.2.0, rbenv: 3.3.0) [gem]" level="application" />
-<<<<<<< HEAD
-=======
     <orderEntry type="library" scope="PROVIDED" name="jwt (v2.8.2, rbenv: 3.3.0) [gem]" level="application" />
->>>>>>> 80a9ffe5e6b708102effd0c6891cd3a5eb60c012
     <orderEntry type="library" scope="PROVIDED" name="language_server-protocol (v3.17.0.3, rbenv: 3.3.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="logger (v1.6.1, rbenv: 3.3.0) [gem]" level="application" />
     <orderEntry type="library" scope="PROVIDED" name="loofah (v2.22.0, rbenv: 3.3.0) [gem]" level="application" />
