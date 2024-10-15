@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  has_one :student
+  has_one :instructor
 
   before_create  :set_default_role
   enum role: { admin: "admin", student: "student", instructor: "instructor" }

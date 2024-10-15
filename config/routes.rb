@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+  # get "instructors/index"
+  # get "instructors/show"
+  # get "instructors/update"
+  # get "instructors/destroy"
+  # get "students/index"
+  # get "students/show"
+  # get "students/update"
+  # get "students/destroy"
+
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
     sign_out: 'logout',
@@ -8,6 +17,9 @@ Rails.application.routes.draw do
      sessions: 'users/sessions',
      registrations: 'users/registrations'
    }
+
+  resource :students
+  resource :instructors
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
