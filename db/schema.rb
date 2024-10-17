@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_10_14_171031) do
+ActiveRecord::Schema[7.2].define(version: 2024_10_15_235830) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -37,7 +37,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_171031) do
     t.date "hire_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "manager_id", null: false
+    t.bigint "manager_id"
     t.index ["manager_id"], name: "index_departments_on_manager_id"
   end
 
@@ -58,8 +58,10 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_171031) do
     t.string "phone"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "department_id", null: false
+    t.bigint "department_id"
+    t.bigint "user_id", null: false
     t.index ["department_id"], name: "index_instructors_on_department_id"
+    t.index ["user_id"], name: "index_instructors_on_user_id"
   end
 
   create_table "students", force: :cascade do |t|
@@ -71,7 +73,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_171031) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "department_id", null: false
+    t.bigint "user_id", null: false
     t.index ["department_id"], name: "index_students_on_department_id"
+    t.index ["user_id"], name: "index_students_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -98,5 +102,7 @@ ActiveRecord::Schema[7.2].define(version: 2024_10_14_171031) do
   add_foreign_key "enrollments", "courses"
   add_foreign_key "enrollments", "students"
   add_foreign_key "instructors", "departments"
+  add_foreign_key "instructors", "users"
   add_foreign_key "students", "departments"
+  add_foreign_key "students", "users"
 end

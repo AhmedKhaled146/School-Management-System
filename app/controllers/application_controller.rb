@@ -6,4 +6,28 @@ class ApplicationController < ActionController::API
     devise_parameter_sanitizer.permit(:sign_up, keys: %i[name email password password_confirmation])
     devise_parameter_sanitizer.permit(:account_update, keys: %i[name avatar])
   end
+
+  private
+
+  def render_errors(object, message = "An error occurred")
+    render json: {
+      errors: object.errors,
+      status: :unprocessable_entity,
+      message: message
+    }, status: :unprocessable_entity
+  end
+
+  def record_not_found(resource = "Record")
+    render json: {
+      errors: "#{resource} not found",
+      status: :not_found,
+      message: "Could not find the requested category"
+    }, status: :not_found
+  end
+
+  def user_not_authorized
+    render json: {
+      status: { code: 403, message: "You are not authorized to perform this action." }
+    }, status: :forbidden
+  end
 end

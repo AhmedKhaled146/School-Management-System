@@ -1,12 +1,4 @@
 Rails.application.routes.draw do
-  # get "instructors/index"
-  # get "instructors/show"
-  # get "instructors/update"
-  # get "instructors/destroy"
-  # get "students/index"
-  # get "students/show"
-  # get "students/update"
-  # get "students/destroy"
 
   devise_for :users, path: '', path_names: {
     sign_in: 'login',
@@ -18,8 +10,16 @@ Rails.application.routes.draw do
      registrations: 'users/registrations'
    }
 
-  resource :students
-  resource :instructors
+  resources :departments do
+    resources :students
+    resources :instructors
+    resources :courses
+  end
+
+  resources :courses do
+    resources :assignments
+    resources :enrollments
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
