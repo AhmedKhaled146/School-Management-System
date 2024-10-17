@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
+  rescue_from ActiveRecord::RecordNotFound, with: :record_not_found
 
   protected
   def configure_permitted_parameters
@@ -8,6 +9,16 @@ class ApplicationController < ActionController::API
   end
 
   private
+
+  def pagination_meta(records)
+    {
+      current_page: records.current_page,
+      next_page: records.next_page,
+      prev_page: records.prev_page,
+      total_pages: records.total_pages,
+      total_count: records.total_count
+    }
+  end
 
   def render_errors(object, message = "An error occurred")
     render json: {
@@ -21,7 +32,7 @@ class ApplicationController < ActionController::API
     render json: {
       errors: "#{resource} not found",
       status: :not_found,
-      message: "Could not find the requested category"
+      message: "Could not find the requested Department"
     }, status: :not_found
   end
 

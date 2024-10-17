@@ -2,11 +2,12 @@ class DepartmentsController < ApplicationController
   before_action :set_department, only: [:show, :update, :destroy]
 
   def index
-    @departments = Department.all
+    @departments = Department.page(params[:page]).per(params[:per_page].presence || 10)
     render json: {
       data: @departments,
       status: :ok,
-      message: "All Departments fetched successfully"
+      message: "All Departments fetched successfully",
+      meta: pagination_meta(@departments)
     }
   end
 
@@ -23,21 +24,36 @@ class DepartmentsController < ApplicationController
     if @department.save
       render json: {
         data: @department,
-        status: :creates,
+        status: :created,
         message: "Department successfully created"
       }, status: :created
     else
-      render json: @department.errors, status: :unprocessable_entity
+      render_errors(@department)
     end
   end
 
   def update
     if @department.update(department_params)
-      render json: @department
+      render json: {
+        data: @department,
+        status: :ok,
+        message: "Department successfully updated"
+      }
+    else
+      render_errors(@department)
     end
   end
 
   def destroy
+    if @department.destroy
+      render json: {
+        data: nil,
+        status: :ok,
+        message: "Department successfully deleted"
+      }
+    else
+      render_errors(@department)
+    end
   end
 
   private
@@ -48,5 +64,7 @@ class DepartmentsController < ApplicationController
 
   def set_department
     @department = Department.find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    record_not_found('Department')
   end
 end
