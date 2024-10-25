@@ -21,7 +21,6 @@ test:
   database: school_management_system_test
 
 
-
 production:
   <<: *default
   database: school_management_system_production
