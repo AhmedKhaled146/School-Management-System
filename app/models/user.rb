@@ -7,6 +7,9 @@ class User < ApplicationRecord
   has_many :courses, foreign_key: 'instructor_id'
   belongs_to :department, optional: true
   has_many :managed_departments, class_name: 'Department', foreign_key: :manager_id
+  has_many :enrollments
+  has_many :enrolled_courses, through: :enrollments, source: :course # Quick access to courses a student is enrolled in.
+
 
   # Set Roles for Users
   enum role: { admin: "admin", student: "student", instructor: "instructor" }
