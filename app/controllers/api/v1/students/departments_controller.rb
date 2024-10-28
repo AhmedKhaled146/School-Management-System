@@ -3,8 +3,10 @@ module Api
     module Students
       class DepartmentsController < ApplicationController
         before_action :set_department, only: [ :show ]
+
         # He Can See All Departments
         # Department Details (any Department)
+
         def index
           @departments = Department.order(:name).page(params[:page]).per(params[:per_page].presence || 10)
           render json: {

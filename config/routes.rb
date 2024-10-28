@@ -21,6 +21,13 @@ Rails.application.routes.draw do
         resources :profiles, only: [ :show, :update ]
         resources :enrollments, only: [ :create, :destroy ]
       end
+
+      namespace :instructors do
+        get "instructor-department-courses", to: "courses#instructor_department_courses"
+        get "courses-instructor-teach", to: "courses#courses_instructor_teach"
+        resources :courses, only: [ :update ]
+        resources :assignments
+      end
     end
   end
 

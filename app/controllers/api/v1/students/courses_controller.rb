@@ -4,7 +4,6 @@ module Api
       class CoursesController < ApplicationController
         before_action :authenticate_user!
         before_action :set_course, only: [ :show ]
-        # before_action :set_department, only: [ :student_department_courses ]
         before_action :set_student, only: [ :student_department_courses, :student_enrolled_courses ]
 
         # See Courses in his Department
@@ -39,7 +38,6 @@ module Api
         def show
           render json: {
             data: @course,
-            status: 200,
             message: 'Course fetched successfully'
           }, status: 200
         end
@@ -51,12 +49,6 @@ module Api
         rescue ActiveRecord::RecordNotFound
           record_not_found('Course')
         end
-
-        # def set_department
-        #   @department = Department.find(params[:department_id])
-        # rescue ActiveRecord::RecordNotFound
-        #   record_not_found('Department')
-        # end
 
         def set_student
           @student = current_user
