@@ -7,4 +7,11 @@ class Department < ApplicationRecord
 
   # Validates
   validates :name, presence: true, uniqueness: true
+  validate :manager_must_be_instructor
+
+  private
+
+  def manager_must_be_instructor
+    errors.add(:manager, "must be an instructor") if manager && !manager.instructor?
+  end
 end

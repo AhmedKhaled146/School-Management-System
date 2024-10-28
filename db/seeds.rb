@@ -7,3 +7,26 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+# Create Department
+# ########################
+# department = Department.create!(
+#   name: "Computer",
+#   manager_id: 3,
+#   description: "Description for computer science department"
+# )
+# Create Course
+# #########################
+# course = Course.create!(
+#   name: "math",
+#   description: "math is course.",
+#   instructor_id: 3,
+#   department_id: 1
+# )
+# ########################
+# course1 = Course.create!(
+#   name: "Computer Science",
+#   description: "computer science is course.",
+#   instructor_id: 3,
+#   department_id: 1
+# )

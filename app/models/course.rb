@@ -7,5 +7,5 @@ class Course < ApplicationRecord
   has_many :students, through: :enrollments, source: :user # Easy access to the students enrolled in each course.
 
   # Validates
-  validates :name, :department_id, presence: true
+  validates :name, :department_id, :instructor_id, presence: true
 end
