@@ -27,6 +27,8 @@ Rails.application.routes.draw do
         get "courses-instructor-teach", to: "courses#courses_instructor_teach"
         resources :courses, only: [ :update ]
         resources :assignments
+        resources :profiles, only: [ :show, :update ]
+        resources :enrollments, only: [ :index ]
       end
     end
   end
