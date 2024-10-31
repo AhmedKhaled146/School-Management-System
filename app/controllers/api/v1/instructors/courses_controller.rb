@@ -4,7 +4,7 @@ module Api
       class CoursesController < ApplicationController
         before_action :authenticate_user!
         before_action :set_instructor, only: [ :courses_instructor_teach, :instructor_department_courses ]
-        before_action :set_course, only: [ :update ]
+        before_action :set_course, only: [ :show, :update ]
 
         # He can See All the courses he teaches.
         # Can See All The Courses in his Department.
@@ -27,6 +27,17 @@ module Api
             message: "All Courses in #{@instructor.department.name} Department Fetched Successfully",
             meta: pagination_meta(@department_courses)
           }, status: :ok
+        end
+
+        def show
+          if @course.department_id == @instructor.department_id
+            render json: {
+              course: @course,
+              message: "Course Details Fetched Successfully"
+            }, status: :ok
+          else
+            user_not_authorized
+          end
         end
 
         def update

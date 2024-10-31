@@ -67,8 +67,11 @@ module Api
 
         def destroy
           if current_user.id == @assignment.course.instructor_id
-            @assignment.destroy
-            render json: { message: "Assignment deleted successfully" }, status: :no_content
+            if @assignment.destroy
+              render json: { message: "Assignment deleted successfully" }, status: :no_content
+            else
+              render_errors(@assignment)
+            end
           else
             user_not_authorized
           end
@@ -89,10 +92,6 @@ module Api
 
         def set_assignment
           @assignment = Assignment.find(params[:id])
-        end
-
-        def set_instructor
-          @instructor = current_user
         end
       end
     end
