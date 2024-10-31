@@ -4,13 +4,13 @@ class ApplicationController < ActionController::API
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up, keys: %i[password password_confirmation first_name last_name email role])
+    devise_parameter_sanitizer.permit(:sign_up, keys: %i[password password_confirmation first_name last_name email role department_id])
     devise_parameter_sanitizer.permit(:account_update, keys: %i[name avatar])
   end
 
   private
 
-  # Pagination Logic
+  # Pagination Logic.
   def pagination_meta(records)
     {
       current_page: records.current_page,
@@ -21,6 +21,7 @@ class ApplicationController < ActionController::API
     }
   end
 
+  # Render Errors in actions.
   def render_errors(object, message = "An error occurred")
     render json: {
       errors: object.errors,
@@ -29,6 +30,7 @@ class ApplicationController < ActionController::API
     }, status: :unprocessable_entity
   end
 
+  # Record Not Found Method.
   def record_not_found(resource = "Record")
     render json: {
       errors: "#{resource} not found",
@@ -37,6 +39,7 @@ class ApplicationController < ActionController::API
     }, status: :not_found
   end
 
+  # User Not Authorized Handle.
   def user_not_authorized
     render json: {
       status: { code: 403, message: "You are not authorized to perform this action." }

@@ -1,19 +1,22 @@
 module Api
   module V1
-    module Students
+    module Users
       class ProfilesController < ApplicationController
         before_action :authenticate_user!
+
         def show
           render json: {
-            user: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+            profile: current_user,
+            message: "Profile fetched successfully"
           }, status: :ok
         end
 
         def update
           if current_user.update(profile_params)
             render json: {
-              user: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
-            }
+              message: "Profile updated successfully",
+              profile: current_user
+            }, status: :ok
           else
             render json: {
               errors: render_errors(current_user)
@@ -24,7 +27,7 @@ module Api
         private
 
         def profile_params
-          params.permit(:first_name, :last_name, :phone, :age)
+          params.require(:user).permit(:first_name, :last_name, :phone, :age)
         end
       end
     end

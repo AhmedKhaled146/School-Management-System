@@ -9,17 +9,57 @@ Rails.application.routes.draw do
     sessions: 'api/v1/users/sessions',
     registrations: 'api/v1/users/registrations'
   }
+
   namespace :api do
     namespace :v1 do
-      # Routes for Students (Departments, courses, assignments, and profile)
+
+      # Routes For Users Action See & Edit His Profile.
+      namespace :users do
+        # routes for Students Profile.
+        resource :profiles, only: [ :show, :update ]
+      end
+
+      # Routes for Students (Departments, courses, assignments, and Enrollment).
       namespace :students do
+
+        # Routes For Departments.
         resources :departments, only: [ :index, :show ]
-        resources :courses, only: [ :show ]
-        get "student-department-courses", to: "courses#student_department_courses"
-        get "student-enrolled-courses", to: "courses#student_enrolled_courses"
-        resources :assignments, only: [ :index, :show ]
-        resources :profiles, only: [ :show, :update ]
+
+        # Routes For Courses
+        resources :courses, only: [ :index, :show ] do
+          collection do
+            get :enrolled_courses
+          end
+        end
+
+        # Routes For Students Enrollment
         resources :enrollments, only: [ :create, :destroy ]
+
+        # Routes for students assignments
+        resources :assignments, only: [ :index, :show ] do
+          collection do
+            get :courses_assignments
+          end
+        end
+
+      end
+
+      namespace :instructors do
+        get "instructor-department-courses", to: "courses#instructor_department_courses"
+        get "courses-instructor-teach", to: "courses#courses_instructor_teach"
+        resources :courses, only: [ :show, :update ]
+        resources :assignments
+        resources :enrollments, only: [ :index ]
+      end
+
+      namespace :managers do
+        resources :courses, only: [ :index, :show ]
+        resources :assignments, only: [ :index, :show ]
+        resources :enrollments, only: [ :index ]
+        resources :departments, only: [ :index, :show ]
+        resources :users, only: [ :destroy ]
+        get "instructors", to: "users#instructors_list"
+        get "students", to: "users#students_list"
       end
     end
   end

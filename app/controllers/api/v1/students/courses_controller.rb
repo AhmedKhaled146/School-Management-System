@@ -3,31 +3,24 @@ module Api
     module Students
       class CoursesController < ApplicationController
         before_action :authenticate_user!
+        before_action :set_department
         before_action :set_course, only: [ :show ]
-        # before_action :set_department, only: [ :student_department_courses ]
-        before_action :set_student, only: [ :student_department_courses, :student_enrolled_courses ]
 
         # See Courses in his Department
         # See All Courses he Enrolled
         # See course Details
 
-        def student_department_courses
-          if @student.department
-            @department_courses = @student.department.courses.page(params[:page]).per(params[:per_page].presence || 10)
-            render json: {
-              data: @department_courses,
-              message: "All Courses in #{@student.department.name} Department Fetched Successfully",
-              meta: pagination_meta(@department_courses)
-            }, status: :ok
-          else
-            render json: {
-              errors: "Student does not have an assigned department",
-            }, status: :not_found
-          end
+        def index
+          @courses = @department.courses.page(params[:page]).per(params[:per_page].presence || 10)
+          render json: {
+            courses: @courses,
+            message: "Courses for #{@department.name} department fetched successfully",
+            meta: pagination_meta(@courses)
+          }, status: :ok
         end
 
-        def student_enrolled_courses
-          @enrolled_courses = @student.enrolled_courses.page(params[:page]).per(params[:per_page] || 10)
+        def enrolled_courses
+          @enrolled_courses = current_user.enrolled_courses.page(params[:page]).per(params[:per_page] || 10)
           render json: {
             data: @enrolled_courses,
             message: "All courses the student is enrolled in fetched successfully",
@@ -38,28 +31,22 @@ module Api
         # See Course Details
         def show
           render json: {
-            data: @course,
-            status: 200,
-            message: 'Course fetched successfully'
-          }, status: 200
+            course: @course,
+            message: "Course details fetched successfully"
+          }, status: :ok
         end
 
 
         private
-        def set_course
-          @course = Course.find(params[:id])
-        rescue ActiveRecord::RecordNotFound
-          record_not_found('Course')
+
+        def set_department
+          @department = current_user.department
+          record_not_found('Department') unless @department
         end
 
-        # def set_department
-        #   @department = Department.find(params[:department_id])
-        # rescue ActiveRecord::RecordNotFound
-        #   record_not_found('Department')
-        # end
-
-        def set_student
-          @student = current_user
+        def set_course
+          @course = @department.courses.find_by(id: params[:id])
+          record_not_found('Course') unless @course
         end
       end
     end

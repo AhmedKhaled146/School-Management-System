@@ -5,16 +5,16 @@ module Api
         before_action :authenticate_user!
         before_action :set_enrollment, only: [ :destroy ]
 
-        # Student Can create an Enrollment
-        # Student Can delete his Enrollment in one week from he enrolled
+        # Student can create an enrollment
+        # Student can delete enrollment within one week of creation
 
         def create
           @enrollment = Enrollment.new(enrollment_params.merge(user_id: current_user.id))
           if @enrollment.save
             render json: {
-              message: 'Your enrollment was created',
-              data: @enrollment.as_json
-            }, status: :ok
+              message: 'Your enrollment was created successfully.',
+              data: @enrollment
+            }, status: :created
           else
             render json: {
               errors: render_errors(@enrollment)
@@ -23,12 +23,9 @@ module Api
         end
 
         def destroy
-          # Check if the enrollment was created within the last week
-          if @enrollment.created_at > 1.week.ago
+          if enrollment_within_timeframe?
             @enrollment.destroy
-            render json: {
-              message: 'Your enrollment was destroyed'
-            }, status: :ok
+            render json: { message: 'Your enrollment was successfully canceled.' }, status: :ok
           else
             render json: {
               message: 'Enrollment can no longer be canceled, as the allowed timeframe has passed.'
@@ -40,12 +37,20 @@ module Api
 
         def set_enrollment
           @enrollment = Enrollment.find(params[:id])
+          unless @enrollment.user_id == current_user.id
+            render json: { message: 'Not authorized to access this enrollment.' }, status: :forbidden
+          end
+        rescue ActiveRecord::RecordNotFound
+          render json: { message: 'Enrollment not found.' }, status: :not_found
+        end
+
+        def enrollment_within_timeframe?
+          @enrollment.created_at > 1.week.ago
         end
 
         def enrollment_params
-          params.require(:enrollment).permit(:course_id, :grade)
+          params.require(:enrollment).permit(:course_id)
         end
-
       end
     end
   end
