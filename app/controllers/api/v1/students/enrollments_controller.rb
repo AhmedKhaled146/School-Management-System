@@ -8,6 +8,13 @@ module Api
         # Student can create an enrollment
         # Student can delete enrollment within one week of creation
 
+        def index
+          enrollments = current_user.enrollments.includes(:course)
+          response = format_enrollments_with_grades(enrollments)
+
+          render json: response, status: :ok
+        end
+
         def create
           @enrollment = Enrollment.new(enrollment_params.merge(user_id: current_user.id))
           if @enrollment.save
@@ -34,6 +41,16 @@ module Api
         end
 
         private
+
+        def format_enrollments_with_grades(enrollments)
+          enrollments.map do |enrollment|
+            {
+              course_name: enrollment.course.name,
+              enrollment_date: enrollment.created_at,
+              grade: enrollment.grade
+            }
+          end
+        end
 
         def set_enrollment
           @enrollment = Enrollment.find(params[:id])

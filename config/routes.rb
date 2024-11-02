@@ -33,7 +33,7 @@ Rails.application.routes.draw do
         end
 
         # Routes For Students Enrollment
-        resources :enrollments, only: [ :create, :destroy ]
+        resources :enrollments, only: [ :index, :create, :destroy ]
 
         # Routes for students assignments
         resources :assignments, only: [ :index, :show ] do
