@@ -44,14 +44,16 @@ Rails.application.routes.draw do
 
       end
 
-
       namespace :instructors do
+        # Routes For Courses.
         resources :courses, only: [ :index, :show, :update ] do
           collection do
             get :courses_instructor_teach
           end
+          # Routes For assignments inside their courses
+          resources :assignments, only: [ :index, :show, :create, :update, :destroy ]
         end
-        resources :assignments
+
         resources :enrollments, only: [ :index ]
       end
 
