@@ -44,7 +44,8 @@ module Api
               first_name: student.first_name,
               last_name: student.last_name,
               email: student.email,
-              phone: student.phone
+              phone: student.phone,
+              grade: enrollment.grade,
             }
           end
         end
