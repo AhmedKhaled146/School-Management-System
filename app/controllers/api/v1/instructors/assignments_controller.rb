@@ -3,80 +3,63 @@ module Api
     module Instructors
       class AssignmentsController < ApplicationController
         before_action :authenticate_user!
-        before_action :set_course, only: [ :create ]
+        before_action :set_course
+        before_action :authorize_instructor!
         before_action :set_assignment, only: [ :show, :update, :destroy ]
-        before_action :assignments_params, only: [ :create, :update ]
+
+        # He Can See all assignments in Courses.
+        # He Can See assignments Details.
+        # He Can Create an assignments.
+        # He Can Update an Assignments.
+        # He Can Destroy anmAssignments.
 
         def index
-          # Find all courses taught by the current instructor
-          instructor_courses = Course.where(instructor_id: current_user.id)
-          response = instructor_courses.map do |course|
-            # For each course, find the assignments created by the instructor
-            assignments = course.assignments.map do |assignment|
-              {
-                id: assignment.id,
-                title: assignment.title,
-                description: assignment.description,
-              }
-            end
-            {
-              course_name: course.name,
-              assignments: assignments
-            }
-          end
-          render json: response, status: :ok
+          assignments = @course.assignments
+          render json: {
+            course_name: @course.name,
+            assignments: assignments.map { |a| assignment_details(a) }
+          }, status: :ok
         end
 
         def show
           render json: {
-            assignment: @assignment,
+            assignment: assignment_details(@assignment),
             message: "Assignment Fetched Successfully"
-          }, status: 200
+          }, status: :ok
         end
 
         def create
-          if current_user.id == @course.instructor_id
-            @assignment = @course.assignments.build(assignments_params)
-            if @assignment.save
-              render json: {
-                assignment: @assignment,
-                message: "Assignment created Successfully"
-              }, status: :created
-            else
-              render_errors(@assignment)
-            end
+          @assignment = @course.assignments.build(assignments_params)
+          if @assignment.save
+            render json: {
+              assignment: assignment_details(@assignment),
+              message: "Assignment created Successfully"
+            }, status: :created
           else
-            user_not_authorized
+            render_errors(@assignment)
           end
         end
 
         def update
-          if current_user.id == @assignment.course.instructor_id
-            if @assignment.update(assignments_params)
-              render json: {
-                assignment: @assignment,
-                message: "Assignment updated successfully"
-              }, status: :ok
-            else
-              render_errors(@assignment)
-            end
+          if @assignment.update(assignments_params)
+            render json: {
+              assignment: assignment_details(@assignment),
+              message: "Assignment updated successfully"
+            }, status: :ok
           else
-            user_not_authorized
+            render_errors(@assignment)
           end
         end
 
         def destroy
-          if current_user.id == @assignment.course.instructor_id
-            if @assignment.destroy
-              render json: { message: "Assignment deleted successfully" }, status: :no_content
-            else
-              render_errors(@assignment)
-            end
+          if @assignment.destroy
+            render json: {
+              message: "Assignment deleted successfully"
+            }, status: :no_content
           else
-            user_not_authorized
+            render_errors(@assignment)
           end
         end
-
 
         private
 
@@ -91,7 +74,22 @@ module Api
         end
 
         def set_assignment
-          @assignment = Assignment.find(params[:id])
+          @assignment = @course.assignments.find_by(id: params[:id])
+          record_not_found('Assignment') unless @assignment
+        end
+
+        def authorize_instructor!
+          unless current_user.id == @course.instructor_id
+            render json: { error: 'Not authorized to manage assignments for this course' }, status: :forbidden
+          end
+        end
+
+        def assignment_details(assignment)
+          {
+            id: assignment.id,
+            title: assignment.title,
+            description: assignment.description
+          }
         end
       end
     end

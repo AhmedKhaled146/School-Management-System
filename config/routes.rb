@@ -45,11 +45,20 @@ Rails.application.routes.draw do
       end
 
       namespace :instructors do
-        get "instructor-department-courses", to: "courses#instructor_department_courses"
-        get "courses-instructor-teach", to: "courses#courses_instructor_teach"
-        resources :courses, only: [ :show, :update ]
-        resources :assignments
-        resources :enrollments, only: [ :index ]
+        # Routes For Courses.
+        resources :courses, only: [ :index, :show, :update ] do
+          collection do
+            get :courses_instructor_teach
+          end
+          # Routes For assignments inside their courses
+          resources :assignments, only: [ :index, :show, :create, :update, :destroy ]
+        end
+
+        resources :enrollments, only: [ :index ] do
+          member do
+            patch :put_final_grade
+          end
+        end
       end
 
       namespace :managers do
