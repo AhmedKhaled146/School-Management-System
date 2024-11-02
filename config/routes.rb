@@ -54,7 +54,11 @@ Rails.application.routes.draw do
           resources :assignments, only: [ :index, :show, :create, :update, :destroy ]
         end
 
-        resources :enrollments, only: [ :index ]
+        resources :enrollments, only: [ :index ] do
+          member do
+            patch :put_final_grade
+          end
+        end
       end
 
       namespace :managers do
