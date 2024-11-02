@@ -46,9 +46,11 @@ Rails.application.routes.draw do
 
 
       namespace :instructors do
-        get "instructor-department-courses", to: "courses#instructor_department_courses"
-        get "courses-instructor-teach", to: "courses#courses_instructor_teach"
-        resources :courses, only: [ :show, :update ]
+        resources :courses, only: [ :index, :show, :update ] do
+          collection do
+            get :courses_instructor_teach
+          end
+        end
         resources :assignments
         resources :enrollments, only: [ :index ]
       end
