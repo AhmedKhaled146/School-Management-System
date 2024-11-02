@@ -44,6 +44,7 @@ Rails.application.routes.draw do
 
       end
 
+
       namespace :instructors do
         get "instructor-department-courses", to: "courses#instructor_department_courses"
         get "courses-instructor-teach", to: "courses#courses_instructor_teach"
