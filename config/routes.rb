@@ -64,10 +64,12 @@ Rails.application.routes.draw do
       # Routes For Managers
       namespace :managers do
         resources :departments, only: [ :index, :show, :update ] do
-            resources :courses
+            resources :courses do
+              resources :assignments, only: [ :index, :show ]
+            end
         end
 
-        resources :assignments, only: [ :index, :show ]
+
         resources :enrollments, only: [ :index ]
 
         resources :users, only: [ :destroy ]
