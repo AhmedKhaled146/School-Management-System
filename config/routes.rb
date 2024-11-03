@@ -45,6 +45,7 @@ Rails.application.routes.draw do
       end
 
       namespace :instructors do
+        resources :departments, only: [ :index, :show ]
         # Routes For Courses.
         resources :courses, only: [ :index, :show, :update ] do
           collection do
