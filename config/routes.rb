@@ -61,11 +61,15 @@ Rails.application.routes.draw do
         end
       end
 
+      # Routes For Managers
       namespace :managers do
-        resources :courses, only: [ :index, :show ]
+        resources :departments, only: [ :index, :show, :update ] do
+            resources :courses
+        end
+
         resources :assignments, only: [ :index, :show ]
         resources :enrollments, only: [ :index ]
-        resources :departments, only: [ :index, :show ]
+
         resources :users, only: [ :destroy ]
         get "instructors", to: "users#instructors_list"
         get "students", to: "users#students_list"
