@@ -8,8 +8,8 @@ module Api
         before_action :set_course
         before_action :set_assignment, only: [ :show ]
 
-        # Manager can view all assignments in a specific course within their department
-        # Manager can view details of a specific assignment in a course
+        # Manager can view all assignments in a specific course within their department.
+        # Manager can view details of a specific assignment in a course.
 
         def index
           @assignments = @course.assignments.page(params[:page]).per(params[:per_page].presence || 10)
