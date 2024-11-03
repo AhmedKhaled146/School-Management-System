@@ -67,10 +67,9 @@ Rails.application.routes.draw do
             resources :courses do
               resources :assignments, only: [ :index, :show ]
             end
+            resources :enrollments, only: [ :index ]
         end
 
-
-        resources :enrollments, only: [ :index ]
 
         resources :users, only: [ :destroy ]
         get "instructors", to: "users#instructors_list"
