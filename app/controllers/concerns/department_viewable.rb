@@ -1,5 +1,6 @@
 module DepartmentViewable
   extend ActiveSupport::Concern
+
   included do
     before_action :set_department, only: [ :show ]
   end
@@ -23,7 +24,7 @@ module DepartmentViewable
   private
 
   def set_department
-    @department = Department.find(params[:department_id])
+    @department = Department.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     record_not_found('Department')
   end

@@ -3,31 +3,29 @@ module Api
     module Managers
       class DepartmentsController < ApplicationController
         include DepartmentViewable
+
         before_action :authenticate_user!
-        before_action :set_department, only: [ :update ]
+        before_action :set_department
+        before_action :authorize_manager!, only: [ :update ]
 
         # He Can Read Departments Information.
         # He Can Update Departments Information.
 
         def update
-          if current_user.id == @department.manager_id
-            if @department.update(department_params)
-              render json: {
-                department: @department,
-                message: "Department Info. Updated Successfully"
-              }, status: :ok
-            else
-              render_errors(@department)
-            end
+          if @department.update(department_params)
+            render json: {
+              department: @department,
+              message: "Department Info. Updated Successfully"
+            }, status: :ok
           else
-            user_not_authorized
+            render_errors(@department)
           end
         end
 
         private
 
-        def set_department
-          @department = Department.find(params[:id])
+        def authorize_manager!
+          user_not_authorized unless current_user.id == @department.manager_id
         end
 
         def department_params
