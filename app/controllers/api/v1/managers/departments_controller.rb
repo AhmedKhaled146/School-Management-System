@@ -3,20 +3,25 @@ module Api
     module Managers
       class DepartmentsController < ApplicationController
         before_action :authenticate_user!
-        before_action :set_department, only: [ :show, :update ]
+        before_action :set_department, only: [ :update ]
 
         # He Can Read Departments Information.
         # He Can Update Departments Information.
 
+        def index
+          @departments = Department.page(params[:page]).per(params[:per_page].presence || 10)
+          render json: {
+            departments: @departments,
+            message: "All Departments Fetched Successfully",
+            meta: pagination_meta(@departments)
+          }, status: :ok
+        end
+
         def show
-          if current_user.id == @department.manager_id
-            render json: {
-              department: @department,
-              message: "Department Info. Fetched Successfully"
-            }, status: :ok
-          else
-            user_not_authorized
-          end
+          render json: {
+            department: @department,
+            message: "Department Info. Fetched Successfully"
+          }, status: :ok
         end
 
         def update

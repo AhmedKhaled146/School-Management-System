@@ -5,19 +5,20 @@ module Api
         before_action :authenticate_user!
         before_action :set_department
         before_action :set_manager
-        before_action :set_course, only: [ :show, :destroy ]
+        before_action :set_course, only: [ :show, :update, :destroy ]
 
         # He Can See All Courses in his department.
         # He Can See Course Details just in his department.
-        # He Can Create Course in his Departments which he manage it.
-        # He can Delete Course in his Department.
+        # He Can Create Course in Department which he manage.
+        # He Can Update Course in Department which he manage.
+        # He can Delete Course in Department which he manage.
 
         def index
-          @department_courses = @department.courses.page(params[:page]).per(params[:per_page].presence || 10)
+          @courses = @department.courses.page(params[:page]).per(params[:per_page].presence || 10)
           render json: {
-            data: @department_courses,
+            data: @courses,
             message: "All Courses in #{@department.name} department fetched successfully",
-            meta: pagination_meta(@department_courses)
+            meta: pagination_meta(@courses)
           }, status: :ok
         end
 
@@ -40,11 +41,20 @@ module Api
           end
         end
 
+        def update
+          if @course.update(course_params)
+            render json: {
+              data: @course,
+              message: "Course updated successfully"
+            }, status: :ok
+          end
+        end
+
         def destroy
           if @course.destroy
             render json: {
               message: "Course deleted successfully"
-            }, status: :no_content
+            }, status: :ok
           else
             render_errors(@course)
           end
@@ -65,7 +75,7 @@ module Api
         end
 
         def course_params
-          params.permit(:name, :description, :department_id, :instructor_id)
+          params.permit(:name, :description)
         end
 
         def set_course
