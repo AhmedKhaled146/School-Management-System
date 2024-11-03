@@ -68,12 +68,9 @@ Rails.application.routes.draw do
               resources :assignments, only: [ :index, :show ]
             end
             resources :enrollments, only: [ :index ]
+            resources :instructors, only: [ :index, :destroy ]
+            resources :students, only: [ :index, :destroy ]
         end
-
-
-        resources :users, only: [ :destroy ]
-        get "instructors", to: "users#instructors_list"
-        get "students", to: "users#students_list"
       end
     end
   end
