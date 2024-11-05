@@ -8,6 +8,7 @@ module Api
         before_action :set_department
         before_action :authorize_manager!, only: [ :update ]
 
+        # He Can See All Departments.
         # He Can Read Departments Information.
         # He Can Update Departments Information.
 

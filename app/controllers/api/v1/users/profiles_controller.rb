@@ -4,6 +4,9 @@ module Api
       class ProfilesController < ApplicationController
         before_action :authenticate_user!
 
+        # He can See All Profile Details
+        # He Can Update The Profile details
+
         def show
           render json: {
             profile: current_user,
