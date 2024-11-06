@@ -73,6 +73,10 @@ Rails.application.routes.draw do
             resources :students, only: [ :index, :destroy ]
         end
       end
+
+      namespace :admins do
+        resources :departments, only: [ :index, :show, :create, :update, :destroy ]
+      end
     end
   end
 
