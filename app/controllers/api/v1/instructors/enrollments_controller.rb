@@ -6,6 +6,9 @@ module Api
         before_action :set_enrollment, only: [ :put_final_grade ]
         before_action :authorize_instructor_for_enrollment, only: [ :put_final_grade ]
 
+        # He Can See All Enrolments with Courses he teaches
+        # He Can Put the final grade for the course
+
         def index
           instructor_courses = courses_taught_by_instructor
           response = format_courses_with_students(instructor_courses)
