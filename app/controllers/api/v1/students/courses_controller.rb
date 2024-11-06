@@ -19,6 +19,13 @@ module Api
           }, status: :ok
         end
 
+        def show
+          render json: {
+            course: @course,
+            message: "Course details fetched successfully"
+          }, status: :ok
+        end
+
         def enrolled_courses
           @enrolled_courses = current_user.enrolled_courses.page(params[:page]).per(params[:per_page] || 10)
           render json: {
@@ -27,15 +34,6 @@ module Api
             meta: pagination_meta(@enrolled_courses)
           }, status: :ok
         end
-
-        # See Course Details
-        def show
-          render json: {
-            course: @course,
-            message: "Course details fetched successfully"
-          }, status: :ok
-        end
-
 
         private
 
