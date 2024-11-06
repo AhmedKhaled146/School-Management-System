@@ -13,6 +13,7 @@ module Api
         # He Can Update Departments Information.
 
         def update
+          authorize @department
           if @department.update(department_params)
             render json: {
               department: @department,
@@ -26,7 +27,7 @@ module Api
         private
 
         def authorize_manager!
-          user_not_authorized unless current_user.id == @department.manager_id
+          user_not_authorized unless policy(@department).update?
         end
 
         def department_params
