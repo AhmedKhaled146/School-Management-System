@@ -10,6 +10,7 @@ module Api
         # Fetch all assignments for the specific course in the student's department only if the student is enrolled in the course.
         # See Assignment details.
         # See Assignments with Courses etc.
+
         def index
           @assignments = Assignment
                            .joins(course: :enrollments)
