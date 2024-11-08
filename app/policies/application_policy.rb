@@ -36,6 +36,28 @@ class ApplicationPolicy
     false
   end
 
+  protected
+
+  def student?
+    user.role == 'student'
+  end
+
+  def instructor?
+    user.role == 'instructor'
+  end
+
+  def admin?
+    user.role == 'admin'
+  end
+
+  def manager?
+    user.role == 'manager'
+  end
+
+  def user_is_manager?
+    record.respond_to?(:manager_id) && record.manager_id == user.id
+  end
+
   class Scope
     def initialize(user, scope)
       @user = user

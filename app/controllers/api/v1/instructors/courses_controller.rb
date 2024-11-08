@@ -5,6 +5,7 @@ module Api
         before_action :authenticate_user!
         before_action :set_department
         before_action :set_course, only: [ :show, :update ]
+        before_action :authorize_instructor!, only: [ :courses_instructor_teach ]
         before_action :set_instructor_courses, only: [ :courses_instructor_teach ]
 
         # Can See All The Courses in his Department.
@@ -22,6 +23,7 @@ module Api
         end
 
         def show
+          authorize @course
           render json: {
             course: @course,
             message: "Course Details Fetched Successfully"
@@ -29,17 +31,14 @@ module Api
         end
 
         def update
-          if @course.instructor_id == current_user.id
-            if @course.update(course_params)
-              render json: {
-                data: @course,
-                message: 'Course successfully updated'
-              }, status: :ok
-            else
-              render_errors(@course)
-            end
+          authorize @course
+          if @course.update(course_params)
+            render json: {
+              data: @course,
+              message: 'Course successfully updated'
+            }, status: :ok
           else
-            user_not_authorized
+            render_errors(@course)
           end
         end
 
@@ -52,6 +51,12 @@ module Api
         end
 
         private
+
+        def authorize_instructor!
+          unless policy(Course.new).courses_instructor_teach?
+            user_not_authorized
+          end
+        end
 
         def course_params
           params.require(:course).permit(:name, :description)

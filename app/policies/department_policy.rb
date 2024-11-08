@@ -25,24 +25,6 @@ class DepartmentPolicy < ApplicationPolicy
     user.admin?
   end
 
-  private
-
-  def student?
-    user.role == 'student'
-  end
-
-  def instructor?
-    user.role == 'instructor'
-  end
-
-  def admin?
-    user.role == 'admin'
-  end
-
-  def user_is_manager?
-    record.manager_id == user.id  # Ensure user is the department's manager
-  end
-
   class Scope < ApplicationPolicy::Scope
     # NOTE: Be explicit about which records you allow access to!
     # def resolve
