@@ -15,7 +15,7 @@ module Api
         def index
           @courses = @department.courses.page(params[:page]).per(params[:per_page].presence || 10)
           render json: {
-            instructor_department_courses: @courses,
+            courses: @courses,
             message: "All Courses in #{@department.name} Department Fetched Successfully",
             meta: pagination_meta(@courses)
           }, status: :ok

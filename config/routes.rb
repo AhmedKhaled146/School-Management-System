@@ -18,6 +18,7 @@ Rails.application.routes.draw do
         resource :profiles, only: [ :show, :update ]
       end
 
+      # Routes For Students
       namespace :students do
         resources :departments, only: [ :index, :show ] do
           resources :courses, only: [ :index, :show ] do

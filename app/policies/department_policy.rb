@@ -18,7 +18,7 @@ class DepartmentPolicy < ApplicationPolicy
   end
 
   def update?
-    user.instructor? && user.user_is_manager? || user.admin?
+    (user.instructor? && user.user_is_manager?) || user.admin?
   end
 
   def destroy?
