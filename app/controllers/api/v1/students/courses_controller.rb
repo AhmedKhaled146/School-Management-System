@@ -3,6 +3,7 @@ module Api
     module Students
       class CoursesController < ApplicationController
         before_action :authenticate_user!
+        before_action :authorize_student!, only: [ :enrolled_courses ]
         before_action :set_department
         before_action :set_course, only: [ :show ]
 
@@ -20,6 +21,7 @@ module Api
         end
 
         def show
+          authorize @course  # Add authorization check based on the policy
           render json: {
             course: @course,
             message: "Course details fetched successfully"
@@ -36,6 +38,12 @@ module Api
         end
 
         private
+
+        def authorize_student!
+          unless policy(Course.new).enrolled_courses?
+            user_not_authorized
+          end
+        end
 
         def set_department
           @department = current_user.department

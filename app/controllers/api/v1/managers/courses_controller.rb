@@ -3,8 +3,8 @@ module Api
     module Managers
       class CoursesController < ApplicationController
         before_action :authenticate_user!
+        before_action :authorize_manager!, only: [ :create, :update, :destroy ]
         before_action :set_department
-        before_action :set_manager
         before_action :set_course, only: [ :show, :update, :destroy ]
 
         # He Can See All Courses in his department.
@@ -23,6 +23,7 @@ module Api
         end
 
         def show
+          authorize @course
           render json: {
             data: @course,
             message: "Course Details fetched successfully"
@@ -31,6 +32,7 @@ module Api
 
         def create
           @course = @department.courses.build(course_params)
+          authorize @course
           if @course.save
             render json: {
               data: @course,
@@ -42,15 +44,19 @@ module Api
         end
 
         def update
+          authorize @course
           if @course.update(course_params)
             render json: {
               data: @course,
               message: "Course updated successfully"
             }, status: :ok
+          else
+            render_errors(@course)
           end
         end
 
         def destroy
+          authorize @course
           if @course.destroy
             render json: {
               message: "Course deleted successfully"
@@ -62,26 +68,26 @@ module Api
 
         private
 
+        def authorize_manager!
+          unless user_is_manager?
+            user_not_authorized
+          end
+        end
+
         def set_department
           @department = Department.find(params[:department_id])
         rescue ActiveRecord::RecordNotFound
           record_not_found('Department')
         end
 
-        def set_manager
-          unless @department.manager_id == current_user.id
-            user_not_authorized
-          end
-        end
-
-        def course_params
-          params.permit(:name, :description)
-        end
-
         def set_course
           @course = @department.courses.find(params[:id])
         rescue ActiveRecord::RecordNotFound
           record_not_found('Course')
+        end
+
+        def course_params
+          params.permit(:name, :description)
         end
       end
     end
