@@ -4,8 +4,8 @@ module Api
       class CoursesController < ApplicationController
         before_action :authenticate_user!
         before_action :set_department
-        before_action :set_course, only: [:show, :update]
-        before_action :set_instructor_courses, only: [:courses_instructor_teach]
+        before_action :set_course, only: [ :show, :update ]
+        before_action :set_instructor_courses, only: [ :courses_instructor_teach ]
 
         # Can See All The Courses in his Department.
         # Instructor can see all courses he teaches.
@@ -15,17 +15,9 @@ module Api
         def index
           @courses = @department.courses.page(params[:page]).per(params[:per_page].presence || 10)
           render json: {
-            instructor_department_courses: @courses,
+            courses: @courses,
             message: "All Courses in #{@department.name} Department Fetched Successfully",
             meta: pagination_meta(@courses)
-          }, status: :ok
-        end
-
-        def courses_instructor_teach
-          render json: {
-            courses: @instructor_courses,
-            message: "Courses taught by #{current_user.first_name} fetched successfully",
-            meta: pagination_meta(@instructor_courses)
           }, status: :ok
         end
 
@@ -49,6 +41,14 @@ module Api
           else
             user_not_authorized
           end
+        end
+
+        def courses_instructor_teach
+          render json: {
+            courses: @instructor_courses,
+            message: "Courses taught by #{current_user.first_name} fetched successfully",
+            meta: pagination_meta(@instructor_courses)
+          }, status: :ok
         end
 
         private

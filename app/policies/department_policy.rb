@@ -6,15 +6,23 @@ class DepartmentPolicy < ApplicationPolicy
   # https://gist.github.com/Burgestrand/4b4bc22f31c8a95c425fc0e30d7ef1f5
 
   def index?
-    student? || instructor? || admin?
+    user.student? || user.instructor? || user.admin?
   end
 
   def show?
-    student? || instructor? || admin?
+    user.student? || user.instructor? || user.admin?
+  end
+
+  def create?
+    user.admin?
   end
 
   def update?
-    instructor? && user_is_manager? || admin?
+    (user.instructor? && user.user_is_manager?) || user.admin?
+  end
+
+  def destroy?
+    user.admin?
   end
 
   private

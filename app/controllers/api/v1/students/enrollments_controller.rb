@@ -3,7 +3,7 @@ module Api
     module Students
       class EnrollmentsController < ApplicationController
         before_action :authenticate_user!
-        before_action :set_enrollment, only: [ :destroy ]
+        before_action :set_enrollment, only: [ :show, :destroy ]
 
         # Student can create an enrollment
         # Student can delete enrollment within one week of creation
@@ -13,6 +13,13 @@ module Api
           response = format_enrollments_with_grades(enrollments)
 
           render json: response, status: :ok
+        end
+
+        def show
+          render json: {
+            enrollment: @enrollment,
+            message: "Enrollment Fetched Successfully"
+          }, status: :ok
         end
 
         def create

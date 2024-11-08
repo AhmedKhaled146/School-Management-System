@@ -13,46 +13,35 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
 
-      # Routes For Users Action See & Edit His Profile.
+      # Routes For Users Profiles
       namespace :users do
-        # routes for Students Profile.
         resource :profiles, only: [ :show, :update ]
       end
 
-      # Routes for Students (Departments, courses, assignments, and Enrollment).
+      # Routes For Students
       namespace :students do
-
-        # Routes For Departments.
-        resources :departments, only: [ :index, :show ]
-
-        # Routes For Courses
-        resources :courses, only: [ :index, :show ] do
-          collection do
-            get :enrolled_courses
+        resources :departments, only: [ :index, :show ] do
+          resources :courses, only: [ :index, :show ] do
+            collection do
+              get :enrolled_courses
+            end
+            resources :assignments, only: [ :index, :show ]
           end
+          get "courses-assignments", to: 'assignments#courses_assignments'
         end
 
-        # Routes For Students Enrollment
         resources :enrollments, only: [ :index, :create, :destroy ]
-
-        # Routes for students assignments
-        resources :assignments, only: [ :index, :show ] do
-          collection do
-            get :courses_assignments
-          end
-        end
-
       end
 
+      # Routes For Instructors
       namespace :instructors do
-        resources :departments, only: [ :index, :show ]
-        # Routes For Courses.
-        resources :courses, only: [ :index, :show, :update ] do
-          collection do
-            get :courses_instructor_teach
+        resources :departments, only: [ :index, :show ] do
+          resources :courses, only: [ :index, :show, :update ] do
+            resources :assignments, only: [ :index, :show, :create, :update, :destroy ]
+            collection do
+              get :courses_instructor_teach
+            end
           end
-          # Routes For assignments inside their courses
-          resources :assignments, only: [ :index, :show, :create, :update, :destroy ]
         end
 
         resources :enrollments, only: [ :index ] do
@@ -68,10 +57,16 @@ Rails.application.routes.draw do
             resources :courses do
               resources :assignments, only: [ :index, :show ]
             end
+
             resources :enrollments, only: [ :index ]
             resources :instructors, only: [ :index, :destroy ]
             resources :students, only: [ :index, :destroy ]
         end
+      end
+
+      # Routes For Admins
+      namespace :admins do
+        resources :departments, only: [ :index, :show, :create, :update, :destroy ]
       end
     end
   end

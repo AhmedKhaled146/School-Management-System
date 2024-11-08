@@ -6,7 +6,7 @@ module DepartmentViewable
   end
 
   def index
-    authorize @department
+    authorize Department
     @departments = Department.order(:name).page(params[:page]).per(params[:per_page].presence || 10)
     render json: {
       departments: @departments,
