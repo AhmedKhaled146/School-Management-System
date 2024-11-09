@@ -4,7 +4,7 @@ module Api
       class AssignmentsController < ApplicationController
         before_action :authenticate_user!
         before_action :set_department
-        before_action :set_course, only: [ :index, :show ]
+        before_action :set_course, only: [ :index, :show, :courses_assignments ]
         before_action :set_assignment, only: [ :show ]
 
         # Fetch all assignments for the specific course in the student's department only if the student is enrolled in the course.
@@ -12,7 +12,9 @@ module Api
         # See Assignments with Courses etc.
 
         def index
-          @assignments = Assignment
+          authorize Assignment
+
+          @assignments = policy_scope(Assignment)
                            .joins(course: :enrollments)
                            .where(enrollments: { user_id: current_user.id }, courses: { id: @course.id })
                            .page(params[:page])
@@ -26,13 +28,18 @@ module Api
         end
 
         def show
+          authorize @assignment
+
           render json: {
             assignment: @assignment,
             message: "Assignment '#{@assignment.title}' found"
           }, status: :ok
         end
 
+        # Fetch assignments for all enrolled courses, with policy checks.
         def courses_assignments
+          authorize Assignment, :courses_assignments?
+
           paginated_courses = current_user.enrolled_courses
                                           .includes(:assignments)
                                           .page(params[:course_page])
@@ -80,6 +87,7 @@ module Api
                           .where(enrollments: { user_id: current_user.id }, courses: { id: @course.id }, id: params[:id])
                           .first
           record_not_found('Assignment') unless @assignment
+          authorize @assignment
         end
       end
     end
