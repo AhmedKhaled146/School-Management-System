@@ -15,7 +15,9 @@ module Api
         # He Can Destroy anmAssignments.
 
         def index
-          @assignments = @course.assignments.page(params[:page]).per(params[:per_page] || 10)
+          authorize Assignment
+          @assignments = policy_scope(@course.assignments).page(params[:page]).per(params[:per_page] || 10)
+
           render json: {
             assignments: @assignments,
             message: "All Assignments in #{@course.name} Course Fetched Successfully",
@@ -24,6 +26,7 @@ module Api
         end
 
         def show
+          authorize @assignment
           render json: {
             assignment: @assignment,
             message: "Assignment Fetched Successfully"
@@ -32,6 +35,8 @@ module Api
 
         def create
           @assignment = @course.assignments.build(assignments_params)
+          authorize @assignment
+
           if @assignment.save
             render json: {
               assignment: @assignment,
@@ -43,6 +48,7 @@ module Api
         end
 
         def update
+          authorize @assignment
           if @assignment.update(assignments_params)
             render json: {
               assignment: @assignment,
@@ -54,6 +60,7 @@ module Api
         end
 
         def destroy
+          authorize @assignment
           if @assignment.destroy
             render json: {
               message: "Assignment deleted successfully"

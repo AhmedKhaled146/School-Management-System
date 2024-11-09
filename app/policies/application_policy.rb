@@ -50,12 +50,9 @@ class ApplicationPolicy
     user.role == 'admin'
   end
 
-  def manager?
-    user.role == 'manager'
-  end
-
   def user_is_manager?
     record.respond_to?(:manager_id) && record.manager_id == user.id
+    # record.respond_to?(:department) && record.department.manager_id == user.id
   end
 
   class Scope

@@ -12,7 +12,9 @@ module Api
         # Manager can view details of a specific assignment in a course.
 
         def index
-          @assignments = @course.assignments.page(params[:page]).per(params[:per_page].presence || 10)
+          authorize Assignment
+          @assignments = policy_scope(@course.assignments).page(params[:page]).per(params[:per_page] || 10)
+
           render json: {
             assignments: @assignments,
             message: "All Assignments in #{@course.name} course of #{@department.name} department fetched successfully",
@@ -21,10 +23,11 @@ module Api
         end
 
         def show
+          authorize @assignment
           render json: {
             assignment: @assignment,
             message: "Assignment details fetched successfully"
-          }, status: :ok
+          }, status: :ok # Ensures the manager has permission to view assignments.
         end
 
         private
@@ -36,7 +39,7 @@ module Api
         end
 
         def set_manager
-          unless @department.manager_id == current_user.id
+          unless @department.manager_id == current_user.id || current_user.admin?
             user_not_authorized
           end
         end
