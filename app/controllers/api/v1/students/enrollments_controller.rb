@@ -2,6 +2,7 @@ module Api
   module V1
     module Students
       class EnrollmentsController < ApplicationController
+
         before_action :authenticate_user!
         before_action :set_enrollment, only: [ :show, :destroy ]
 
@@ -9,13 +10,13 @@ module Api
         # Student can delete enrollment within one week of creation
 
         def index
-          enrollments = current_user.enrollments.includes(:course)
+          enrollments = policy_scope(current_user.enrollments.includes(:course))
           response = format_enrollments_with_grades(enrollments)
-
           render json: response, status: :ok
         end
 
         def show
+          authorize @enrollment
           render json: {
             enrollment: @enrollment,
             message: "Enrollment Fetched Successfully"
@@ -24,28 +25,31 @@ module Api
 
         def create
           @enrollment = Enrollment.new(enrollment_params.merge(user_id: current_user.id))
+          authorize @enrollment
           if @enrollment.save
             render json: {
               message: 'Your enrollment was created successfully.',
               data: @enrollment
             }, status: :created
           else
-            render json: {
-              errors: render_errors(@enrollment)
-            }, status: :unprocessable_entity
+            render_errors(@enrollment)
           end
         end
 
         def destroy
-          if enrollment_within_timeframe?
-            @enrollment.destroy
-            render json: { message: 'Your enrollment was successfully canceled.' }, status: :ok
-          else
-            render json: {
-              message: 'Enrollment can no longer be canceled, as the allowed timeframe has passed.'
-            }, status: :forbidden
-          end
+          @enrollment = Enrollment.find(params[:id])
+          authorize @enrollment, :destroy?
+
+          @enrollment.destroy
+          render json: {
+            message: 'Your enrollment was successfully canceled.'
+          }, status: :ok
+        rescue Pundit::NotAuthorizedError
+          render json: {
+            message: 'Enrollment can no longer be canceled, as the allowed timeframe has passed.'
+          }, status: :forbidden
         end
+
 
         private
 
@@ -61,15 +65,9 @@ module Api
 
         def set_enrollment
           @enrollment = Enrollment.find(params[:id])
-          unless @enrollment.user_id == current_user.id
-            render json: { message: 'Not authorized to access this enrollment.' }, status: :forbidden
-          end
+          authorize @enrollment
         rescue ActiveRecord::RecordNotFound
           render json: { message: 'Enrollment not found.' }, status: :not_found
-        end
-
-        def enrollment_within_timeframe?
-          @enrollment.created_at > 1.week.ago
         end
 
         def enrollment_params
