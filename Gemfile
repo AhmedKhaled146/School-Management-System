@@ -30,6 +30,15 @@ gem 'kaminari'
 
 # For Authorization
 gem "pundit"
+
+# For Notifications
+gem 'sidekiq'
+
+# For Mail and Notifications
+gem 'mail'
+gem 'dotenv-rails', groups: [ :development, :test ]
+
+
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 

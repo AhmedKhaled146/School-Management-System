@@ -27,6 +27,7 @@ module Api
           @enrollment = Enrollment.new(enrollment_params.merge(user_id: current_user.id))
           authorize @enrollment
           if @enrollment.save
+            EnrollmentNotificationJob.perform_later(@enrollment)
             render json: {
               message: 'Your enrollment was created successfully.',
               data: @enrollment

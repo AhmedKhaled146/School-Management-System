@@ -1,0 +1,4 @@
+<p>Hello, <%= @user.email %></p>
+<p>Welcome To Out High Max School. Here We Build the Future of You together.</p>
+<p>You Can Login Now: </p>
+<p><%= link_to 'Login', edit_password_url(token: @user.reset_password_token) %></p>
